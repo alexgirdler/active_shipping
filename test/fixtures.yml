@@ -1,9 +1,9 @@
 usps:
   login: APIKey
 ups:
-  key: 4CC2E1D53E03F465
-  login: happenstock
-  password: 'parrot#pin2red' 
+  key: XmlAccessKey
+  login: UPSDotComLogin
+  password: UPSDotComPassword
 fedex:
   account: FedExAccountNumber
   login: FedExMeterNumber
