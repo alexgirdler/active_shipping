@@ -199,4 +199,12 @@ class UPSTest < Test::Unit::TestCase
     assert Package.new((150 * 16) + 0.01, [5,5,5], :units => :imperial).mass > @carrier.maximum_weight
     assert Package.new((150 * 16) - 0.01, [5,5,5], :units => :imperial).mass < @carrier.maximum_weight
   end
+
+  def test_get_all_tracking_numbers
+    mock_response = xml_fixture('ups/test_get_all_tracking_numbers_response')
+    @carrier.expects(:commit).returns(mock_response)
+    response = @carrier.find_all_tracking_numbers('1Z7301510374144406')
+    assert_equal 14, response.count
+  end
+  
 end

@@ -121,6 +121,22 @@ module ActiveMerchant
         parse_tracking_response(response, options)
       end
 
+      def find_all_tracking_numbers(shipment_number, options={})
+        options = @options.update(options)
+        access_request = build_access_request
+        shipment_request = build_shipment_request(shipment_number, options)
+        response = commit(:track, save_request(access_request + shipment_request), (options[:test] || false))
+        parse_shipment_response(response, options)
+      end
+
+      def find_all_tracking_info(shipment_number, options={})
+        options = @options.update(options)
+        tracking_info = [] 
+        find_all_tracking_numbers(shipment_number, options).each do |tracking_number|
+          tracking_info << find_tracking_info(tracking_number, options)
+        end
+      end
+
       protected
 
       def upsified_location(location)
@@ -242,6 +258,17 @@ module ActiveMerchant
             request << XmlNode.new('RequestOption', '1')
           end
           root_node << XmlNode.new('TrackingNumber', tracking_number.to_s)
+        end
+        xml_request.to_s
+      end
+
+      def build_shipment_request(shipment_number, options={})
+        xml_request = XmlNode.new('TrackRequest') do |root_node|
+          root_node << XmlNode.new('Request') do |request|
+            request << XmlNode.new('RequestAction', 'Track')
+            request << XmlNode.new('RequestOption', '1')
+          end
+          root_node << XmlNode.new('ShipmentIdentificationNumber', shipment_number.to_s)
         end
         xml_request.to_s
       end
@@ -422,6 +449,20 @@ module ActiveMerchant
           :origin => origin,
           :destination => destination,
           :tracking_number => tracking_number)
+      end
+
+      def parse_shipment_response(response, options={})
+        xml = REXML::Document.new(response)
+        success = response_success?(xml)
+        message = response_message(xml)
+
+        if success
+          tracking_numbers = []
+          xml.elements.each('/*/Shipment/Package/') do |package| 
+            tracking_numbers << package.get_text('TrackingNumber').to_s 
+          end
+          tracking_numbers
+        end
       end
 
       def location_from_address_node(address)
