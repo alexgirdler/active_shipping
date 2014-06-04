@@ -27,6 +27,18 @@ class UPSTest < Test::Unit::TestCase
     end
   end
 
+  def test_getting_all_tracking_numbers
+    assert_nothing_raised do
+      response = @carrier.find_all_tracking_numbers('1Z7301510374144406')
+    end
+  end
+
+  def test_tracking_all_numbers
+    assert_nothing_raised do
+      response = @carrier.find_all_tracking_info('1Z7301510374144406')
+    end
+  end
+
   def test_us_to_uk
     response = nil
     assert_nothing_raised do
