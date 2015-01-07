@@ -128,7 +128,7 @@ module ActiveMerchant
       def find_all_tracking_numbers(shipment_number, options={})
         options = @options.update(options)
         access_request = build_access_request
-        shipment_request = build_shipment_request(shipment_number, options)
+        shipment_request = build_shipment_tracking_request(shipment_number, options)
         response = commit(:track, save_request(access_request + shipment_request), (options[:test] || false))
         parse_shipment_response(response, options)
       end
@@ -138,6 +138,8 @@ module ActiveMerchant
         tracking_info = [] 
         find_all_tracking_numbers(shipment_number, options).each do |tracking_number|
           tracking_info << find_tracking_info(tracking_number, options)
+        end
+      end
 
       def create_shipment(origin, destination, packages, options = {})
         options = @options.merge(options)
@@ -370,7 +372,7 @@ module ActiveMerchant
         xml_request.to_s
       end
 
-      def build_shipment_request(shipment_number, options={})
+      def build_shipment_tracking_request(shipment_number, options={})
         xml_request = XmlNode.new('TrackRequest') do |root_node|
           root_node << XmlNode.new('Request') do |request|
             request << XmlNode.new('RequestAction', 'Track')
