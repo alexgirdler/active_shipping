@@ -370,7 +370,6 @@ module ActiveMerchant
         xml_request.to_s
       end
 
-<<<<<<< HEAD
       def build_shipment_request(shipment_number, options={})
         xml_request = XmlNode.new('TrackRequest') do |root_node|
           root_node << XmlNode.new('Request') do |request|
@@ -382,10 +381,7 @@ module ActiveMerchant
         xml_request.to_s
       end
 
-      def build_location_node(name,location,options={})
-=======
       def build_location_node(name, location, options = {})
->>>>>>> upstream/master
         # not implemented:  * Shipment/Shipper/Name element
         #                   * Shipment/(ShipTo|ShipFrom)/CompanyName element
         #                   * Shipment/(Shipper|ShipTo|ShipFrom)/AttentionName element
